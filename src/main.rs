@@ -22,8 +22,11 @@ impl <'a>Iterator for StrSplit<'a> {
            let until_next = &self.remainder[..next_delim];
            self.remainder = &self.remainder[(next_delim + self.delimiter.len())..];
            Some(until_next)
-        } else {
+        } else if !self.remainder.is_empty() {
+            let rest = self.remainder;
             self.remainder = "";
+            Some(rest)
+        } else {
             None
         }
     }
@@ -31,13 +34,28 @@ impl <'a>Iterator for StrSplit<'a> {
 
 fn main() {
 
-    println!("Yes");
-
-    let input = StrSplit::new("a b c d empty full poop", " ");
-
+    let input = StrSplit::new("a b c d e ", " ");
     let words = input.into_iter();
 
     for word in words {
         println!("Word! {}", word);
+    }
+}
+
+#[cfg(test)] mod tests {
+    use super::*;
+
+    #[test]
+    fn it_works() {
+        let haystack = "a b c d e";
+        let letters: Vec<_> = StrSplit::new(haystack, " ").collect();
+        assert_eq!(letters, vec!["a", "b", "c", "d", "e"]);
+    }
+
+    #[test]
+    fn tail() {
+        let haystack = "a b c d ";
+        let letters: Vec<_> = StrSplit::new(haystack, " ").collect();
+        assert_eq!(letters, vec!["a", "b", "c", "d", ""]);
     }
 }
