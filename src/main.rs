@@ -1,20 +1,19 @@
-#![warn(rust_2018_idioms, dead_code)]
-
 #[derive(Debug)]
 pub struct StrSplit<'a> {
     remainder: Option<&'a str>,
-    delimiter: &'a str
+    delimiter: &'a str,
 }
 
-impl <'a>StrSplit<'a> {
+impl<'a> StrSplit<'a> {
     pub fn new(haystack: &'a str, delimiter: &'a str) -> Self {
-        StrSplit{
-                remainder: Some(haystack),
-                delimiter}
+        StrSplit {
+            remainder: Some(haystack),
+            delimiter,
+        }
     }
 }
 
-impl <'a>Iterator for StrSplit<'a> {
+impl<'a> Iterator for StrSplit<'a> {
     type Item = &'a str;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -22,9 +21,9 @@ impl <'a>Iterator for StrSplit<'a> {
             None => None,
             Some(remainder) => {
                 if let Some(next_delim) = remainder.find(self.delimiter) {
-                   let until_next = &remainder[..next_delim];
-                   self.remainder = Some(&remainder[(next_delim + self.delimiter.len())..]);
-                   Some(until_next)
+                    let until_next = &remainder[..next_delim];
+                    self.remainder = Some(&remainder[(next_delim + self.delimiter.len())..]);
+                    Some(until_next)
                 } else {
                     self.remainder = None;
                     Some(remainder)
@@ -43,7 +42,8 @@ fn main() {
     }
 }
 
-#[cfg(test)] mod tests {
+#[cfg(test)]
+mod tests {
     use super::*;
 
     #[test]
